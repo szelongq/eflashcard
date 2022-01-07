@@ -1,8 +1,11 @@
 import 'package:eflashcard/flashcard.dart';
+import 'package:eflashcard/language.dart';
+import 'package:eflashcard/writing_systems_dropdown.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
 
 import 'flashcard_view.dart';
@@ -64,13 +67,31 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currIndex = 0;
+
+
+  static const japanese = Language(
+      name: 'Japanese',
+      writingSystems: {
+        'hr':"Hiragana",
+        'kj':'Kanji',
+        'en':'English'});
+  final List<Language> _languages = [japanese];
+
   List<Flashcard> _flashcards = [
     const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
-  late FlashcardView main;
+  late FlashcardView flashcardView;
+  String _frontWS = 'hr';
+  String _backWS = 'en';
+
 
   @override
   Widget build(BuildContext context) {
+
+    WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
+        writingSystems: japanese.writingSystems,
+        notifyParent: updateFlashcardsFromDropdown,
+    );
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -104,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            _wsDropdown,
             StreamBuilder(
             stream: FirebaseFirestore.instance.collection('flashcards')
             .snapshots(),  // query firestore for flashcards documents
@@ -136,9 +158,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 _currIndex = (_currIndex > _flashcards.length - 1 ||
                     _currIndex <
                     0) ? 0 : _currIndex;
-                return main = FlashcardView(
-                    front: _flashcards[_currIndex].hr,
-                    back: _flashcards[_currIndex].en
+
+                return flashcardView = FlashcardView(
+                    front: _flashcards[_currIndex].get(_frontWS),
+                    back: _flashcards[_currIndex].get(_backWS),
                   );
               }
             }),
@@ -170,15 +193,23 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _currIndex = (_currIndex - 1 >= 0) ? _currIndex - 1
           : _flashcards.length - 1;
-      main.resetFlip();
+      flashcardView.resetFlip();
     });
   }
 
   void showNextCard() {
      setState(() {
        _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
-       main.resetFlip();
+       flashcardView.resetFlip();
      });
+  }
+
+  // Observer Pattern https://stackoverflow.com/a/51778268
+  void updateFlashcardsFromDropdown(String frontValue, String backValue) {
+    setState(() {
+      _frontWS = frontValue;
+      _backWS = backValue;
+    });
   }
 
 }
