@@ -1,10 +1,16 @@
 import 'package:eflashcard/flashcard.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'flashcard_view.dart';
 
-void main() {
+void main() async {
+  /*
+   * Magic firebase code from https://stackoverflow.com/a/63537567
+   */
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -60,7 +66,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
