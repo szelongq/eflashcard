@@ -1,6 +1,7 @@
 class Flashcard {
-  final String front;
-  final String back;
+  final String en;
+  final String hr;
+  final String kj;
 
-  const Flashcard({required this.front, required this.back});
+  const Flashcard({required this.en, required this.hr, required this.kj});
 }

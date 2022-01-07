@@ -1,5 +1,6 @@
 import 'package:eflashcard/flashcard.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'flashcard_view.dart';
 
@@ -52,25 +53,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currIndex = 0;
-  final List<Flashcard> _flashcards = [
-    const Flashcard(front: '日本語', back: 'japanese'),
-    const Flashcard(front: '空', back: 'sky'),
-    const Flashcard(front: '下', back: 'down'),
+  List<Flashcard> _flashcards = [
+    const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
   late FlashcardView main;
-
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,9 +94,25 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            main = FlashcardView(
-                front: _flashcards[_currIndex].front,
-                back: _flashcards[_currIndex].back),
+            StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('flashcards').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.data == null) {
+                return const Text('Loading...');
+              } else if (snapshot.hasError) {
+                print(snapshot.error);
+                return const Text('Error encountered. Please restart app.');
+              } else {
+                _flashcards = snapshot.data as List<Flashcard>; // casting
+                _currIndex = (_currIndex > _flashcards.length - 1 ||
+                    _currIndex <
+                    0) ? 0 : _currIndex;
+                return main = FlashcardView(
+                    front: _flashcards[_currIndex].hr,
+                    back: _flashcards[_currIndex].en
+                  );
+              }
+            }),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -128,8 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: (){},
+        tooltip: 'Add Flashcard',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -149,4 +151,5 @@ class _MyHomePageState extends State<MyHomePage> {
        main.resetFlip();
      });
   }
+
 }
