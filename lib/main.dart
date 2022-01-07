@@ -81,13 +81,17 @@ class _MyHomePageState extends State<MyHomePage> {
     const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
   late FlashcardView flashcardView;
+  late String _frontWS;
+  late String _backWS;
+
 
   @override
   Widget build(BuildContext context) {
 
-    WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown
-      (writingSystems: japanese
-        .writingSystems);
+    WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
+        writingSystems: japanese.writingSystems,
+        notifyParent: updateFlashcardsFromDropdown,
+    );
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -154,14 +158,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 _currIndex = (_currIndex > _flashcards.length - 1 ||
                     _currIndex <
                     0) ? 0 : _currIndex;
-                String _front = _flashcards[_currIndex].get(_wsDropdown
-                    .frontValue);
-                String _back = _flashcards[_currIndex].get(_wsDropdown
-                    .backValue);
 
                 return flashcardView = FlashcardView(
-                    front: _front,
-                    back: _back,
+                    front: _flashcards[_currIndex].get(_frontWS),
+                    back: _flashcards[_currIndex].get(_backWS),
                   );
               }
             }),
@@ -202,6 +202,12 @@ class _MyHomePageState extends State<MyHomePage> {
        _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
        flashcardView.resetFlip();
      });
+  }
+
+  // Observer Pattern https://stackoverflow.com/a/51778268
+  void updateFlashcardsFromDropdown(String frontValue, String backValue) {
+    _frontWS = frontValue;
+    _backWS = backValue;
   }
 
 }
