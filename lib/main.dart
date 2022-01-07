@@ -80,10 +80,14 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Flashcard> _flashcards = [
     const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
-  late FlashcardView main;
+  late FlashcardView flashcardView;
 
   @override
   Widget build(BuildContext context) {
+
+    WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown
+      (writingSystems: japanese
+        .writingSystems);
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -117,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            WritingSystemsDropdown(writingSystems: japanese.writingSystems),
+            _wsDropdown,
             StreamBuilder(
             stream: FirebaseFirestore.instance.collection('flashcards')
             .snapshots(),  // query firestore for flashcards documents
@@ -150,9 +154,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 _currIndex = (_currIndex > _flashcards.length - 1 ||
                     _currIndex <
                     0) ? 0 : _currIndex;
-                return main = FlashcardView(
-                    front: _flashcards[_currIndex].hr,
-                    back: _flashcards[_currIndex].en
+                String _front = _flashcards[_currIndex].get(_wsDropdown
+                    .frontValue);
+                String _back = _flashcards[_currIndex].get(_wsDropdown
+                    .backValue);
+
+                return flashcardView = FlashcardView(
+                    front: _front,
+                    back: _back,
                   );
               }
             }),
@@ -184,14 +193,14 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _currIndex = (_currIndex - 1 >= 0) ? _currIndex - 1
           : _flashcards.length - 1;
-      main.resetFlip();
+      flashcardView.resetFlip();
     });
   }
 
   void showNextCard() {
      setState(() {
        _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
-       main.resetFlip();
+       flashcardView.resetFlip();
      });
   }
 

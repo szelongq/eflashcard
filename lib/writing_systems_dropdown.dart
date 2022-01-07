@@ -11,6 +11,7 @@ class WritingSystemsDropdown extends StatelessWidget {
 
   // Attr
   final Map<String, String> writingSystems;
+  final Map<String, String> reversedWS;
 
   // State
   String frontValue;
@@ -19,22 +20,25 @@ class WritingSystemsDropdown extends StatelessWidget {
   WritingSystemsDropdown({Key? key, required this.writingSystems}) :
     frontValue = writingSystems.keys.toList(growable: false).first,
     backValue = writingSystems.keys.toList(growable: false)[1],
+    reversedWS = writingSystems.map((k, v) => MapEntry(v, k)),  //
+  // https://stackoverflow.com/a/52059899
     super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    frontValue = writingSystems.keys.toList(growable: false).first;
-    backValue = writingSystems.keys.toList(growable: false)[1];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         _buildDropdown(context, frontValue, backValue, (newValue) => {
-          frontValue = newValue!  // use ! only if sure it will nvr be null
+          frontValue = reversedWS[newValue]!,  // use ! only if sure it will
+          // nvr be null
+          print(frontValue + " <---> " +  backValue)
           // suppress warnings strikes again
         }),
         _buildDropdown(context, backValue, frontValue, (newValue) => {
-          backValue = newValue!
+          backValue = reversedWS[newValue]!,
+          print(frontValue + " <---> " +  backValue)
         }),
       ],
     );
