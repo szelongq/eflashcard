@@ -1,3 +1,4 @@
+import 'package:eflashcard/flashcard.dart';
 import 'package:flutter/material.dart';
 
 import 'flashcard_view.dart';
@@ -50,6 +51,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _currIndex = 0;
+  final List<Flashcard> _flashcards = [
+    const Flashcard(front: '日本語', back: 'Japanese'),
+    const Flashcard(front: '空', back: 'sky'),
+    const Flashcard(front: '下', back: 'down'),
+  ];
+
   int _counter = 0;
 
   void _incrementCounter() {
@@ -65,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -97,12 +107,20 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const FlashcardView(front: "Japanese", back: "English"),
+            FlashcardView(
+                front: _flashcards[_currIndex].front,
+                back: _flashcards[_currIndex].back),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                OutlinedButton(onPressed: (){}, child: const Text('Prev'))
-
+                OutlinedButton.icon(
+                  onPressed: showPrevCard,
+                  icon: Icon(Icons.chevron_left),
+                  label: Text('Prev')),
+                OutlinedButton.icon(
+                    onPressed: showNextCard,
+                    icon: Icon(Icons.chevron_right),
+                    label: Text('Next'))
               ],
             ),
             const Text(
@@ -121,5 +139,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void showPrevCard() {
+    setState(() {
+      _currIndex = (_currIndex - 1 >= 0) ? _currIndex - 1
+          : _flashcards.length - 1;
+    });
+  }
+
+  void showNextCard() {
+     setState(() {
+       _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
+     });
   }
 }
