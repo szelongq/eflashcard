@@ -40,7 +40,7 @@ class _WritingSystemsDropdownState extends State<WritingSystemsDropdown> {
     frontValue = widget.writingSystems.keys
       .toList(growable: false).first;
     backValue = widget.writingSystems.keys.toList(growable: false)[1];
-    widget.notifyParent(frontValue, backValue);
+    //widget.notifyParent(frontValue, backValue);
   }
 
   @override

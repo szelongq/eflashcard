@@ -81,8 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
     const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
   late FlashcardView flashcardView;
-  late String _frontWS;
-  late String _backWS;
+  String _frontWS = 'hr';
+  String _backWS = 'en';
 
 
   @override
@@ -206,8 +206,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Observer Pattern https://stackoverflow.com/a/51778268
   void updateFlashcardsFromDropdown(String frontValue, String backValue) {
-    _frontWS = frontValue;
-    _backWS = backValue;
+    setState(() {
+      _frontWS = frontValue;
+      _backWS = backValue;
+    });
   }
 
 }
