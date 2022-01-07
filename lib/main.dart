@@ -71,7 +71,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static const japanese = Language(
       name: 'Japanese',
-      writingSystems: {'hr': "Hiragana", 'kj': 'Kanji', 'en': 'English'});
+      writingSystems: {
+        'hr':"Hiragana",
+        'kj':'Kanji',
+        'en':'English'});
+  
   final List<Language> _languages = [japanese];
 
   List<Flashcard> _flashcards = [
@@ -88,6 +92,11 @@ class _MyHomePageState extends State<MyHomePage> {
     WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
       writingSystems: japanese.writingSystems,
       notifyParent: updateFlashcardsFromDropdown,
+    );
+
+    WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
+        writingSystems: japanese.writingSystems,
+        notifyParent: updateFlashcardsFromDropdown,
     );
 
     // This method is rerun every time setState is called, for instance as done
@@ -192,17 +201,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void showPrevCard() {
     setState(() {
-      _currIndex =
-          (_currIndex - 1 >= 0) ? _currIndex - 1 : _flashcards.length - 1;
+      _currIndex = (_currIndex - 1 >= 0) ? _currIndex - 1
+          : _flashcards.length - 1;
       flashcardView.resetFlip();
     });
   }
 
   void showNextCard() {
-    setState(() {
-      _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
-      flashcardView.resetFlip();
-    });
+     setState(() {
+       _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
+       flashcardView.resetFlip();
+     });
   }
 
   // Observer Pattern https://stackoverflow.com/a/51778268
@@ -212,4 +221,5 @@ class _MyHomePageState extends State<MyHomePage> {
       _backWS = backValue;
     });
   }
+
 }
