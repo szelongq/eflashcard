@@ -1,8 +1,11 @@
 import 'package:eflashcard/flashcard.dart';
+import 'package:eflashcard/language.dart';
+import 'package:eflashcard/writing_systems_dropdown.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
 
 import 'flashcard_view.dart';
@@ -64,6 +67,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currIndex = 0;
+
+
+  static const japanese = Language(
+      name: 'Japanese',
+      writingSystems: {
+        'hr':"Hiragana",
+        'kj':'Kanji',
+        'en':'English'});
+  final List<Language> _languages = [japanese];
+
   List<Flashcard> _flashcards = [
     const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
@@ -104,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            WritingSystemsDropdown(writingSystems: japanese.writingSystems),
             StreamBuilder(
             stream: FirebaseFirestore.instance.collection('flashcards')
             .snapshots(),  // query firestore for flashcards documents
