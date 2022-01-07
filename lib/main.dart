@@ -53,7 +53,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currIndex = 0;
   final List<Flashcard> _flashcards = [
-    const Flashcard(front: '日本語', back: 'Japanese'),
+    const Flashcard(front: '日本語', back: 'japanese'),
     const Flashcard(front: '空', back: 'sky'),
     const Flashcard(front: '下', back: 'down'),
   ];
@@ -123,13 +123,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.chevron_right),
                     label: Text('Next'))
               ],
-            ),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
