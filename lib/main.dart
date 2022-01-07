@@ -77,9 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Flashcard> _flashcards = [
     const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
+  late FlashcardView flashcardView;
   String _frontWS = 'hr';
-  String _backWS = 'en';
-  FlashcardView flashcardView = FlashcardView(front: 'にほんご', back: 'japanese');
+  String _backWS = 'kj';
 
   FlashcardTest test = FlashcardTest();
 

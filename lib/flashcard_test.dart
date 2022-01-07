@@ -56,6 +56,7 @@ class _FlashcardTestState extends State<FlashcardTest> {
     ]);
   }
 
+  // Runs whenever input is submitted from the TextField
   void checkAnswer(String input) {
     print("Entered: " + input + " Answer: " + widget.answer);
     if (input == widget.answer) {
@@ -73,7 +74,7 @@ class _FlashcardTestState extends State<FlashcardTest> {
 
   void resetAnswer() {
     setState(() {
-      _controller.text = "";
+      _controller.clear();
       result = "";
     });
   }
