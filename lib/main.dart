@@ -1,4 +1,5 @@
 import 'package:eflashcard/flashcard.dart';
+import 'package:eflashcard/flashcard_test.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'flashcard_view.dart';
+import 'flashcard_test.dart';
 
 void main() async {
   /*
@@ -68,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
   late FlashcardView main;
+  late FlashcardTest test;
 
   @override
   Widget build(BuildContext context) {
@@ -153,15 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     label: const Text('Next'))
               ],
             ),
-            const SizedBox(
-              width: 250.0,
-              child: TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Your Answer',
-                ),
-              ),
-            ),
+            test = FlashcardTest(
+                answer: _flashcards[_currIndex].en), // FlashcardTest Answer,
           ],
         ),
       ),
