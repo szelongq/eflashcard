@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "395012212058",
+    "project_id": "eflashcard-4dfea",
+    "storage_bucket": "eflashcard-4dfea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395012212058:android:0d402fdccd447c16299f63",
+        "android_client_info": {
+          "package_name": "com.example.eflashcard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "395012212058-1cgmafqf4sadit8lfibb78cdsgg10v5p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCl66TshF7A_t6zFcJmlMD0yfMCnCZfg44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "395012212058-1cgmafqf4sadit8lfibb78cdsgg10v5p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

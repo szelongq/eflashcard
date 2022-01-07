@@ -1,9 +1,21 @@
 import 'package:eflashcard/flashcard.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'flashcard_view.dart';
 
-void main() {
+void main() async {
+  /*
+   * Magic firebase code from https://stackoverflow.com/a/63537567 and https://stackoverflow.com/a/70234018
+   * Thank the heavens for blessing me with stackoverflow
+   */
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -52,29 +64,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currIndex = 0;
-  final List<Flashcard> _flashcards = [
-    const Flashcard(front: '日本語', back: 'japanese'),
-    const Flashcard(front: '空', back: 'sky'),
-    const Flashcard(front: '下', back: 'down'),
+  List<Flashcard> _flashcards = [
+    const Flashcard(kj: '日本語', hr: 'にほんご', en: 'japanese')
   ];
   late FlashcardView main;
 
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -108,9 +104,44 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            main = FlashcardView(
-                front: _flashcards[_currIndex].front,
-                back: _flashcards[_currIndex].back),
+            StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('flashcards')
+            .snapshots(),  // query firestore for flashcards documents
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.data == null) {
+                return const Text('Loading...');
+              } else if (snapshot.hasError) {
+                if (kDebugMode) {
+                  print(snapshot.error);
+                }
+                return const Text('Error encountered. Please restart app.');
+              } else {
+                // I believe in api documentation https://firebase.google.com/docs/reference/js/v8/firebase.firestore.QuerySnapshot#docs
+                QuerySnapshot<Object?> _qs = snapshot.data as QuerySnapshot; //
+                // casting
+                if (_qs.size == 0) return const Text('No flashcards');  //
+                // flashcards document not found
+                List<QueryDocumentSnapshot<Object?>> _qds = _qs.docs;
+                _flashcards = [];
+                _qds.forEach((doc) {
+                    // Godsend https://stackoverflow.com/a/60246487
+                    // https://stackoverflow.com/a/63529675
+                    var _data = doc.data() as Map;
+                    _flashcards.add(Flashcard(
+                      en: _data["en"],
+                      hr: _data["hr"],
+                      kj: _data["kj"]));
+                  }
+                );
+                _currIndex = (_currIndex > _flashcards.length - 1 ||
+                    _currIndex <
+                    0) ? 0 : _currIndex;
+                return main = FlashcardView(
+                    front: _flashcards[_currIndex].hr,
+                    back: _flashcards[_currIndex].en
+                  );
+              }
+            }),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -128,8 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: (){},
+        tooltip: 'Add Flashcard',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -149,4 +180,5 @@ class _MyHomePageState extends State<MyHomePage> {
        main.resetFlip();
      });
   }
+
 }
