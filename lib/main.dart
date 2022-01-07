@@ -57,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const Flashcard(front: '空', back: 'sky'),
     const Flashcard(front: '下', back: 'down'),
   ];
+  late FlashcardView main;
 
   int _counter = 0;
 
@@ -107,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            FlashcardView(
+            main = FlashcardView(
                 front: _flashcards[_currIndex].front,
                 back: _flashcards[_currIndex].back),
             Row(
@@ -145,12 +146,14 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _currIndex = (_currIndex - 1 >= 0) ? _currIndex - 1
           : _flashcards.length - 1;
+      main.resetFlip();
     });
   }
 
   void showNextCard() {
      setState(() {
        _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
+       main.resetFlip();
      });
   }
 }
