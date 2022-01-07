@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class FlashcardTest extends StatefulWidget {
-  final String answer;
+  String answer = "";
 
-  const FlashcardTest({Key? key, required this.answer}) : super(key: key);
+  FlashcardTest({Key? key}) : super(key: key);
 
   @override
   State<FlashcardTest> createState() => _FlashcardTestState();

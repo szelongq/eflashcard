@@ -156,6 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ? 0
                             : _currIndex;
 
+                    // Update the answer to the flashcard
                     test.answer = _flashcards[_currIndex].get(_backWS);
 
                     return flashcardView = FlashcardView(
@@ -177,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     label: const Text('Next'))
               ],
             ),
-            test, // FlashcardTest Answer,
+            test, // FlashcardTest Widget,
           ],
         ),
       ),
