@@ -1,4 +1,7 @@
+import 'package:eflashcard/flashcard.dart';
 import 'package:flutter/material.dart';
+
+import 'flashcard_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Eflashcard',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -22,9 +25,9 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.lightGreen,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Home'),
     );
   }
 }
@@ -48,6 +51,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _currIndex = 0;
+  final List<Flashcard> _flashcards = [
+    const Flashcard(front: '日本語', back: 'japanese'),
+    const Flashcard(front: '空', back: 'sky'),
+    const Flashcard(front: '下', back: 'down'),
+  ];
+  late FlashcardView main;
+
   int _counter = 0;
 
   void _incrementCounter() {
@@ -63,6 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -95,12 +108,21 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            main = FlashcardView(
+                front: _flashcards[_currIndex].front,
+                back: _flashcards[_currIndex].back),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: showPrevCard,
+                  icon: Icon(Icons.chevron_left),
+                  label: Text('Prev')),
+                OutlinedButton.icon(
+                    onPressed: showNextCard,
+                    icon: Icon(Icons.chevron_right),
+                    label: Text('Next'))
+              ],
             ),
           ],
         ),
@@ -111,5 +133,20 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void showPrevCard() {
+    setState(() {
+      _currIndex = (_currIndex - 1 >= 0) ? _currIndex - 1
+          : _flashcards.length - 1;
+      main.resetFlip();
+    });
+  }
+
+  void showNextCard() {
+     setState(() {
+       _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
+       main.resetFlip();
+     });
   }
 }
