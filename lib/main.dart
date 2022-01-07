@@ -71,7 +71,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -105,61 +104,69 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder(
-            stream: FirebaseFirestore.instance.collection('flashcards')
-            .snapshots(),  // query firestore for flashcards documents
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.data == null) {
-                return const Text('Loading...');
-              } else if (snapshot.hasError) {
-                if (kDebugMode) {
-                  print(snapshot.error);
-                }
-                return const Text('Error encountered. Please restart app.');
-              } else {
-                // I believe in api documentation https://firebase.google.com/docs/reference/js/v8/firebase.firestore.QuerySnapshot#docs
-                QuerySnapshot<Object?> _qs = snapshot.data as QuerySnapshot; //
-                // casting
-                if (_qs.size == 0) return const Text('No flashcards');  //
-                // flashcards document not found
-                List<QueryDocumentSnapshot<Object?>> _qds = _qs.docs;
-                _flashcards = [];
-                _qds.forEach((doc) {
-                    // Godsend https://stackoverflow.com/a/60246487
-                    // https://stackoverflow.com/a/63529675
-                    var _data = doc.data() as Map;
-                    _flashcards.add(Flashcard(
-                      en: _data["en"],
-                      hr: _data["hr"],
-                      kj: _data["kj"]));
+                stream: FirebaseFirestore.instance
+                    .collection('flashcards')
+                    .snapshots(), // query firestore for flashcards documents
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return const Text('Loading...');
+                  } else if (snapshot.hasError) {
+                    if (kDebugMode) {
+                      print(snapshot.error);
+                    }
+                    return const Text('Error encountered. Please restart app.');
+                  } else {
+                    // I believe in api documentation https://firebase.google.com/docs/reference/js/v8/firebase.firestore.QuerySnapshot#docs
+                    QuerySnapshot<Object?> _qs =
+                        snapshot.data as QuerySnapshot; //
+                    // casting
+                    if (_qs.size == 0) return const Text('No flashcards'); //
+                    // flashcards document not found
+                    List<QueryDocumentSnapshot<Object?>> _qds = _qs.docs;
+                    _flashcards = [];
+                    _qds.forEach((doc) {
+                      // Godsend https://stackoverflow.com/a/60246487
+                      // https://stackoverflow.com/a/63529675
+                      var _data = doc.data() as Map;
+                      _flashcards.add(Flashcard(
+                          en: _data["en"], hr: _data["hr"], kj: _data["kj"]));
+                    });
+                    _currIndex =
+                        (_currIndex > _flashcards.length - 1 || _currIndex < 0)
+                            ? 0
+                            : _currIndex;
+                    return main = FlashcardView(
+                        front: _flashcards[_currIndex].hr,
+                        back: _flashcards[_currIndex].en);
                   }
-                );
-                _currIndex = (_currIndex > _flashcards.length - 1 ||
-                    _currIndex <
-                    0) ? 0 : _currIndex;
-                return main = FlashcardView(
-                    front: _flashcards[_currIndex].hr,
-                    back: _flashcards[_currIndex].en
-                  );
-              }
-            }),
+                }),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 OutlinedButton.icon(
-                  onPressed: showPrevCard,
-                  icon: Icon(Icons.chevron_left),
-                  label: Text('Prev')),
+                    onPressed: showPrevCard,
+                    icon: const Icon(Icons.chevron_left),
+                    label: const Text('Prev')),
                 OutlinedButton.icon(
                     onPressed: showNextCard,
-                    icon: Icon(Icons.chevron_right),
-                    label: Text('Next'))
+                    icon: const Icon(Icons.chevron_right),
+                    label: const Text('Next'))
               ],
+            ),
+            const SizedBox(
+              width: 250.0,
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Your Answer',
+                ),
+              ),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: () {},
         tooltip: 'Add Flashcard',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -168,17 +175,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void showPrevCard() {
     setState(() {
-      _currIndex = (_currIndex - 1 >= 0) ? _currIndex - 1
-          : _flashcards.length - 1;
+      _currIndex =
+          (_currIndex - 1 >= 0) ? _currIndex - 1 : _flashcards.length - 1;
       main.resetFlip();
     });
   }
 
   void showNextCard() {
-     setState(() {
-       _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
-       main.resetFlip();
-     });
+    setState(() {
+      _currIndex = (_currIndex + 1 < _flashcards.length) ? _currIndex + 1 : 0;
+      main.resetFlip();
+    });
   }
-
 }
