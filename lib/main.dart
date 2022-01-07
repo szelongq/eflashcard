@@ -2,15 +2,19 @@ import 'package:eflashcard/flashcard.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'flashcard_view.dart';
 
 void main() async {
   /*
-   * Magic firebase code from https://stackoverflow.com/a/63537567
+   * Magic firebase code from https://stackoverflow.com/a/63537567 and https://stackoverflow.com/a/70234018
+   * Thank the heavens for blessing me with stackoverflow
    */
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
