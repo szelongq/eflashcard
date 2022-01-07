@@ -128,9 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     // https://stackoverflow.com/a/63529675
                     var _data = doc.data() as Map;
                     _flashcards.add(Flashcard(
-                      en: _data!["en"],
-                      hr: _data!["hr"],
-                      kj: _data!["kj"]));
+                      en: _data["en"],
+                      hr: _data["hr"],
+                      kj: _data["kj"]));
                   }
                 );
                 _currIndex = (_currIndex > _flashcards.length - 1 ||
