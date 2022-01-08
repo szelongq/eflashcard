@@ -13,4 +13,8 @@ Written using [Flutter](https://flutter.dev/) framework to work on both Android 
 
 ## Getting Started
 
-To be released
+
+## Screenshots
+
+<img src='https://user-images.githubusercontent.com/77230723/148630363-743d153e-00b6-4a0f-abe5-b403e1ffd9d5.png' width="240" height="400" /> <img src='https://user-images.githubusercontent.com/77230723/148630375-ce85435d-0737-4197-b54d-067737177a30.png' width="240" height="400" />
+
