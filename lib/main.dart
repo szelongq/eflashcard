@@ -1,6 +1,7 @@
 import 'package:eflashcard/flashcard.dart';
 import 'package:eflashcard/language.dart';
 import 'package:eflashcard/writing_systems_dropdown.dart';
+import 'package:eflashcard/flashcard_test.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -68,13 +69,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currIndex = 0;
 
-
   static const japanese = Language(
       name: 'Japanese',
       writingSystems: {
         'hr':"Hiragana",
         'kj':'Kanji',
         'en':'English'});
+  
   final List<Language> _languages = [japanese];
 
   List<Flashcard> _flashcards = [
@@ -82,11 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
   late FlashcardView flashcardView;
   String _frontWS = 'hr';
-  String _backWS = 'en';
+  String _backWS = 'kj';
 
+  FlashcardTest test = FlashcardTest();
 
   @override
   Widget build(BuildContext context) {
+    WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
+      writingSystems: japanese.writingSystems,
+      notifyParent: updateFlashcardsFromDropdown,
+    );
 
     WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
         writingSystems: japanese.writingSystems,
@@ -127,62 +133,66 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             _wsDropdown,
             StreamBuilder(
-            stream: FirebaseFirestore.instance.collection('flashcards')
-            .snapshots(),  // query firestore for flashcards documents
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.data == null) {
-                return const Text('Loading...');
-              } else if (snapshot.hasError) {
-                if (kDebugMode) {
-                  print(snapshot.error);
-                }
-                return const Text('Error encountered. Please restart app.');
-              } else {
-                // I believe in api documentation https://firebase.google.com/docs/reference/js/v8/firebase.firestore.QuerySnapshot#docs
-                QuerySnapshot<Object?> _qs = snapshot.data as QuerySnapshot; //
-                // casting
-                if (_qs.size == 0) return const Text('No flashcards');  //
-                // flashcards document not found
-                List<QueryDocumentSnapshot<Object?>> _qds = _qs.docs;
-                _flashcards = [];
-                _qds.forEach((doc) {
-                    // Godsend https://stackoverflow.com/a/60246487
-                    // https://stackoverflow.com/a/63529675
-                    var _data = doc.data() as Map;
-                    _flashcards.add(Flashcard(
-                      en: _data["en"],
-                      hr: _data["hr"],
-                      kj: _data["kj"]));
-                  }
-                );
-                _currIndex = (_currIndex > _flashcards.length - 1 ||
-                    _currIndex <
-                    0) ? 0 : _currIndex;
+                stream: FirebaseFirestore.instance
+                    .collection('flashcards')
+                    .snapshots(), // query firestore for flashcards documents
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return const Text('Loading...');
+                  } else if (snapshot.hasError) {
+                    if (kDebugMode) {
+                      print(snapshot.error);
+                    }
+                    return const Text('Error encountered. Please restart app.');
+                  } else {
+                    // I believe in api documentation https://firebase.google.com/docs/reference/js/v8/firebase.firestore.QuerySnapshot#docs
+                    QuerySnapshot<Object?> _qs =
+                        snapshot.data as QuerySnapshot; //
+                    // casting
+                    if (_qs.size == 0) return const Text('No flashcards'); //
+                    // flashcards document not found
+                    List<QueryDocumentSnapshot<Object?>> _qds = _qs.docs;
+                    _flashcards = [];
+                    _qds.forEach((doc) {
+                      // Godsend https://stackoverflow.com/a/60246487
+                      // https://stackoverflow.com/a/63529675
+                      var _data = doc.data() as Map;
+                      _flashcards.add(Flashcard(
+                          en: _data["en"], hr: _data["hr"], kj: _data["kj"]));
+                    });
+                    _currIndex =
+                        (_currIndex > _flashcards.length - 1 || _currIndex < 0)
+                            ? 0
+                            : _currIndex;
 
-                return flashcardView = FlashcardView(
-                    front: _flashcards[_currIndex].get(_frontWS),
-                    back: _flashcards[_currIndex].get(_backWS),
-                  );
-              }
-            }),
+                    // Update the answer to the flashcard
+                    test.answer = _flashcards[_currIndex].get(_backWS);
+
+                    return flashcardView = FlashcardView(
+                      front: _flashcards[_currIndex].get(_frontWS),
+                      back: _flashcards[_currIndex].get(_backWS),
+                    );
+                  }
+                }),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 OutlinedButton.icon(
-                  onPressed: showPrevCard,
-                  icon: Icon(Icons.chevron_left),
-                  label: Text('Prev')),
+                    onPressed: showPrevCard,
+                    icon: const Icon(Icons.chevron_left),
+                    label: const Text('Prev')),
                 OutlinedButton.icon(
                     onPressed: showNextCard,
-                    icon: Icon(Icons.chevron_right),
-                    label: Text('Next'))
+                    icon: const Icon(Icons.chevron_right),
+                    label: const Text('Next'))
               ],
             ),
+            test, // FlashcardTest Widget,
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: () {},
         tooltip: 'Add Flashcard',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
