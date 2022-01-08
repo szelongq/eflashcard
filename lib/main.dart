@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
         'hr':"Hiragana",
         'kj':'Kanji',
         'en':'English'});
-  
+
   final List<Language> _languages = [japanese];
 
   List<Flashcard> _flashcards = [
@@ -92,11 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
     WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
       writingSystems: japanese.writingSystems,
       notifyParent: updateFlashcardsFromDropdown,
-    );
-
-    WritingSystemsDropdown _wsDropdown = WritingSystemsDropdown(
-        writingSystems: japanese.writingSystems,
-        notifyParent: updateFlashcardsFromDropdown,
     );
 
     // This method is rerun every time setState is called, for instance as done
